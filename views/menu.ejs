@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <style>
+            ul{
+                margin:0;
+                padding:0;
+                font-size: 0;
+            }
+            li{
+                list-style: none;
+                font-size:14px;
+                padding:0 20px;
+                padding:10px;
+            }
+            .box{
+                border:1px #666 solid;
+                border-radius: 5px;
+            }
+        </style>
+        <script>
+            var app = angular.module("menuApp",[]);
+            app.controller("menuCtrl",function($scope){
+                $scope.list = [
+                    {itemId : 1, itemName : '샌드위치', itemPrice: 2000, itemCount : 0},
+                    {itemId : 2, itemName : '아메리카노', itemPrice: 1000, itemCount : 0},
+                    {itemld : 3, itemName :  '카푸치노', itemPrice: 1500, itemCount : 0}
+                ];
+                $scope.sum = function(){
+                    var total = 0;
+                    $scope.list.forEach(function(e,i){
+                        total += e.itemPrice * e.itemCount;
+                    });
+                    return total;
+                }
+            });
+        </script>
+        <script>
+            $(window).ready(function(){
+                var maxHeight = 0;
+                $('.box').each(function(i,e){
+                    maxHeight < $(e).height() ? maxHeight = $(e).height() : '';
+                });
+                $('.box').css('height',maxHeight+'px');
+            });
+        </script>
+    </head>
+    <body ng-app="menuApp">
+        <div class="container" ng-controller="menuCtrl">
+            <h1>Menu</h1>
+            <hr>
+            <br>
+            <div class="leftbox box col-sm-6">
+                <h2 class="text-center">항목</h2>
+                <hr>
+                <br>
+                <ul>
+                    <li ng-repeat="item in list">
+                        <span class="pull-left">{{item.itemName}}&nbsp;&nbsp;&nbsp;&nbsp;{{item.itemPrice}}원</span>
+                        <span class="pull-right"><input type="number" ng-model="item.itemCount"></span>
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+                <br>
+            </div>
+            <div class="rightbox box col-sm-6">
+                <h2 class="text-center">합계</h2>
+                <hr>
+                <br>
+                <h3 class="text-right" style="padding:20px;">
+                    {{sum()}}원
+                </h3>
+            </div>
+            <div class="clearfix"></div>
+            <br>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
