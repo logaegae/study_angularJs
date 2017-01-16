@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <style>
+        .box{
+            border:1px solid #000;
+            display:inline-block;
+            width:100px;
+            height:100px;
+        }
+        .red{
+            background: red;
+        }
+        .green{
+            background: green;
+        }
+        .blue{
+            background: blue;
+        }
+        .none{
+            background: transparent;
+        }
+        </style>
+        <script>
+
+        </script>
+    </head>
+    <body ng-app>
+        <div class="container">
+            <h1>switch</h1>
+            <hr>
+            <br>
+            <p>선택하기</p>
+            <input type="radio" ng-model="colorName" value="red">red<br>
+            <input type="radio" ng-model="colorName" value="green">green<br>
+            <input type="radio" ng-model="colorName" value="blue">blue<br>
+            <br>
+            <div class="text-center" ng-switch on="colorName">
+                <div class="box red" ng-switch-when="red"></div>
+                <div class="box green" ng-switch-when="green"></div>
+                <div class="box blue" ng-switch-when="blue"></div>
+                <div class="box none" ng-switch-default></div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+            var app = angular.module("formApp",[]);
+            app.controller("formCtrl",function($scope){
+                $scope.textNum = function(text){
+                    var num=0;
+                    if(text){
+                        num = text.length;
+                    }
+                    return num;
+                }
+                $scope.countryList = [
+                    {name: '한국', code: 'KR', continent: '아시아'},
+                    {name: '일본', code: 'jr', continent: '아시아'},
+                    {name: '미국', code: 'am', continent: '북미'}]
+            });
+        </script>
+        <style>
+            .ng-valid{
+                border:2px green solid;
+            }
+            .ng-invalid{
+                border:2px red solid;
+            }
+            .ng-pristine{
+                border:1px black dashed;
+            }
+            .ng-dirty{
+                border:1px black solid;
+            }
+        </style>
+    </head>
+    <body ng-app="formApp">
+        <div class="container text-center" ng-controller="formCtrl">
+            <h1>form</h1>
+            <hr>
+            <form name="sampleForm">
+                <fieldset class="form-group text-left">
+                    <legend>속성/메서드 보기</legend>
+                        <label for="name">이름&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <input type="text" name="name" ng-model="name" id="name" ng-maxlength="3" ng-required="true">
+                        <br><br>
+                        <label for="tel">전화번호&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <input type="text" name="tel" ng-model="tel" id="tel" ng-pattern="/^\d{3}-\d{4}-\d{4}$/" ng-required="true">
+                        <br><br>
+                        <label for="check">확인&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <input type="checkbox" name="check" ng-model="check" id="check">
+                        <br><br>
+                        <label for="area">메모&nbsp;&nbsp;&nbsp;&nbsp;</label><span>글자수 : {{textNum(area)}}</span><br>
+                        <textarea name="area" id="area" cols="30" rows="10" ng-model="area" ng-require="false"></textarea>
+                </fieldset>
+            </form>
+            <hr>
+            <div>
+                <p>form.$pristine : {{sampleForm.$pristine}}</p>
+                <p>form.$dirty : {{sampleForm.$dirty}}</p>
+                <p>form.$valid : {{sampleForm.$valid}}</p>
+                <p>form.$invalid : {{sampleForm.$invalid}}</p>
+                <p>form.$error : {{sampleForm.$error}}</p>
+            </div>
+            <hr>
+            <div>
+                <p>input.$viewValue : {{sampleForm.name.$viewValue}}</p>
+                <p>input.$modelValue : {{sampleForm.name.$modelValue}}</p>
+                <p>input.$parsers : {{sampleForm.tel.$parsers}}</p>
+                <p>input.$formatters : {{sampleForm.tel.$formatters}}</p>
+                <p>input.$viewChangeListeners : {{sampleForm.check.$viewChangeListeners}}</p>
+                <p>input.$error : {{sampleForm.check.$viewChangeListeners}}</p>
+                <p>input.$pristine : {{sampleForm.area.$pristine}}</p>
+                <p>input.$dirty : {{sampleForm.area.$pristine}}</p>
+                <p>input.$valid : {{sampleForm.name.$valid}}</p>
+                <p>input.$invalid : {{sampleForm.name.$invalid}}</p>
+            </div>
+            <hr>
+            <form name="country">
+                <div class="form-group">
+                    <select ng-model="depCountry" ng-options="country.code as country.name for country in countryList" ng-required="true" name="depCountry" id="">
+                        <option value="">선택하세요</option>
+                    </select>
+                    <select ng-model="viaCountry" ng-options="country.name as country.name for country in countryList" ng-required="true" name="viaCountry" id="">
+                        <option value="">선택하세요</option>
+                    </select>
+                    <select ng-model="arrCountry" ng-options="country.name group by country.continent for country in countryList" ng-required="true" name="arrCountry" id="">
+                        <option value="">선택하세요</option>
+                    </select>
+                </div>
+            </form>
+            <div>
+                <p class="text-center">{{depCountry}}</p>
+                <p class="text-center">{{viaCountry}}</p>
+                <p class="text-center">{{arrCountry}}</p>
+                <div ng-show="country.$invalid">
+                    선택을 하면 사라짐
+                </div>
+            </div>
+            <hr>
+            <form name="check" ng-init="value1 = true; value2 = '좋다';">
+                선택 1: <input type="checkbox" name="check1" ng-model="value1"><br/>
+                선택 2: <input type="checkbox" name="check2" ng-model="value2" ng-true-value="'좋다'" ng-false-value="'싫다'"><br/>
+                <p>선택1의 바인딩 된 값 : {{value1}}</p>
+                <p>선택2의 바인딩 된 값 : {{value2}}</p>
+            </form>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

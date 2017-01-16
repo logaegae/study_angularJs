@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+    </head>
+    <body ng-app>
+        <div class="container">
+            <h1>if</h1>
+            <hr>
+            <br>
+
+            <label for="agree">동의하시겠습니까?</label>&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="agree" ng-model="agree" ng-true-value="true" ng-false-value-"false"><br>
+            <br>
+            <p>동의하면 다음으로 진행합니다&nbsp;&nbsp;&nbsp;<button ng-if="agree">다음</button></p>
+
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

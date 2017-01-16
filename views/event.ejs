@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+            angular.module('myApp',[]).controller("eventCtrl",function($scope){
+                $scope.data = {
+                    num: 0,
+                    upNum: 0,
+                    dbNum: 0,
+                    mousedn: 0,
+                    mouseetr: 0,
+                    mouselv: 0,
+                    mousemv: 0,
+                    mouseov: 0,
+                    change:false
+                };
+
+                $scope.count = function(){
+                    $scope.data.num++;
+                }
+                $scope.dbCount= function(){
+                    $scope.data.dbNum++;
+                }
+                $scope.mouseup = function(){
+                    $scope.data.upNum++;
+                }
+                $scope.mousedown = function(){
+                    $scope.data.mousedn++;
+                }
+                $scope.mouseenter = function(){
+                    $scope.data.mouseetr++;
+                }
+                $scope.mouseleave = function(){
+                    $scope.data.mouselv++;
+                }
+                $scope.mousemove = function(){
+                    $scope.data.mousemv++;
+                }
+                $scope.mouseover = function(){
+                    $scope.data.mouseov++;
+                }
+                $scope.textChange = function(){
+                    $scope.data.change = true;
+                }
+                $scope.bgR={
+                    border : '1px red solid'
+                }
+                $scope.changeCss = function(color){
+                    $scope.bgR.border = '1px '+color+' solid';
+                }
+            });
+        </script>
+        <style>
+            .box{
+                display:inline-block;
+                width:100px;
+                height:100px;
+                border:1px #000 solid;
+            }
+            .red{
+                border:1px red solid;
+            }
+        </style>
+    </head>
+    <body ng-app="myApp">
+        <div class="container" ng-controller="eventCtrl">
+            <h1>event</h1>
+            <hr>
+                <p>ng-click : {{data.num}}회 <button class="btn btn-sm btn-default" ng-click="count()">click</button></p>
+                ng-dbclick : <div class="box" ng-dbclick="dbclick()">{{data.dbNum}}</div><br>
+                ng-mouseup : <div class="box" ng-mouseup="mouseup()">{{data.upNum}}</div><br>
+                ng-mousedown : <div class="box" ng-mousedown="mousedown()">{{data.mousedn}}</div><br>
+                ng-mouseenter : <div class="box" ng-mouseenter="mouseenter()">{{data.mouseetr}}</div><br>
+                ng-mouseover : <div class="box" ng-mouseover="mouseover()">{{data.mouseov}}</div><br>
+                ng-mouseleave : <div class="box" ng-mouseleave="mouseleave()">{{data.mouselv}}</div><br>
+                ng-mousemove : <div class="box" ng-mousemove="mousemove()">{{data.mousemv}}</div><br>
+                ng-change, ng-class : <input type="text" ng-model="ex1" ng-change="textChange()" ng-class="{red:data.change}"><br>
+                ng-blur : <input type="input" ng-model="color" placeholder="input color name" ng-blur="changeCss(color)" ng-style="bgR">
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
