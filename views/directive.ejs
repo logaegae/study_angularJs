@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html ng-app="sampleApp">
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+            angular.module('sampleApp',[])
+            .controller('mainCtrl',['$scope', function($scope){
+                $scope.getStyle = function(){
+                    return {"color" : "red"}
+                };
+                $scope.name="ctrl에서 사용된 name 모델";
+                $scope.helloList=[{name:'google'},{name:'naver'},{name:'angular'}];
+                $scope.sendMessage = function(to){
+                    console.log(to + "에게 메세지를 보낸다.");
+                }
+            }])
+            .directive('hello',function(){
+                return function(scope, iElement, iAttrs, controller){
+                    iElement.html("<h1>hello "+iAttrs.name+"</h1>");
+                }
+            })
+            .directive('hello2',function($log){
+                return {
+                    name:0,
+                    priority:0,
+                    template:'<div></div>',
+                    // templateUrl:'directive.html'
+                    replace:false,
+                    transclude:false,
+                    restrict:'A',
+                    scope:false,
+                    // require:'ngModel',
+                    controller:function($scope,$element,$attrs,$transclude){
+                    },
+                    compile:function compile(tElement, tAttrs){
+                        return {
+                            pre:function preLink(scope,iElement,iAttrs,controller){
+
+                            },
+                            post:function postLink(scope, iElement, iAttrs, controller){
+                                $log.log("<h1>hello "+iAttrs.name+"</h1>");
+                                iElement.html("<h1>hello "+iAttrs.name+"</h1>");
+                            }
+                        }
+                        // 또는
+                        // return function postLink(scope, iElement, iAttrs, controller, transcludeFn){}
+                    }
+                    // 또는
+                    // link: {
+                    //    pre:function preLink(scope,iElement,iAttrs,controller,transcludeFn){},
+                    //    post:function postLink(scope,iElement,iAttrs,controller,transcludeFn){},
+                    // }
+                    // 또는
+                    // link: function postLink(scope, iElement, iAttrs, controller, transcludeFn){}
+                }
+            })
+            .directive('hello3',function(){
+                return{
+                    template:"<h1>hello <span>name</span></h1>",
+                    // templateUrl을 따로 두면 구분이 쉽다
+                    // templateUrl : ex.html,
+                    restrict:"AE",
+                    link:function link(scope,iEl,iAt,ctrl){
+                        iEl.find("span").text(iAt.name);
+                    }
+                }
+            })
+            .directive('hello4',function(){
+                return{
+                    templateUrl : 'template/directiveTmpl.html',
+                    restrict:"AE",
+                    controller:function($scope,$element,$attrs,$transclude){
+                        $scope.name = $attrs.name;
+                    }
+                }
+            })
+            .directive('hello5',function(){
+                return{
+                    templateUrl : 'template/directiveTmpl.html',
+                    restrict:"AE",
+                    scope:true,
+                    controller:function($scope,$element,$attrs,$transclude){
+                        if($attrs.name) $scope.name = $attrs.name;
+                    }
+                }
+            })
+            .directive('hello6',function(){
+                return{
+                    templateUrl : 'template/directiveTmpl.html',
+                    restrict:"AE",
+                    scope:{name:"@to"}
+                }
+            })
+            .directive('hello7',function(){
+                return{
+                    templateUrl : 'template/directiveTmpl2.html',
+                    restrict:"AE",
+                    scope:{
+                        name:"@to",
+                        send:"&"
+                    }
+                }
+            })
+            .directive('hello8',function(){
+                return{
+                    templateUrl : 'template/directiveTmpl3.html',
+                    restrict:"AE",
+                    scope:{
+                        name:"=to"
+                    }
+                }
+            })
+        </script>
+    </head>
+    <body ng-controller="mainCtrl">
+        <div class="container">
+            <p ng:style="getStyle()">Hello</p>
+            <p class="ng_style:getStyle();">World</p>
+            <ng-form name="groupForm">
+                <form name="formA"><input type="text"></form>
+                <form name="formB"><input type="text"></form>
+            </ng-form>
+            <hr>
+            <br>
+            <p>지시자 설정함수 반환 시</p>
+            <div hello name="angularJS"></div>
+            <br>
+            <p>지시자 설정객체 반환 시</p>
+            <div hello2 name="angularJS"></div>
+            <br>
+            <p>지시자 설정객체 예시 : template과 마크업 구조를 알아야 수정가능</p>
+            <div hello3 name="angularJS"></div>
+            <br>
+            <p>지시자 설정객체 templateUrl 예시 : 구성요소를 몰라도 수정가능</p>
+            <div hello4 name="angularJS"></div>
+            <br>
+            <p>지시자 설정객체 templateUrl &amp; scope 설정 </p>
+            <div hello5 name="google"></div>
+            <div hello5 name="naver"></div>
+            <div hello5 ></div>
+            <br>
+            <p>scope에 객체 리터럴 할당 : @사용, scope 상속 방지</p>
+            <div hello6 to="google"></div>
+            <div hello6 to="naver"></div>
+            <div hello6 ></div>
+            <br>
+            <p>컨트롤러 함수에 응용</p>
+            <div ng-repeat="list in helloList" hello6 to="{{list.name}}"></div>
+            <p>컨트롤러 함수에 응용 : &amp;(속성값은 부모scope로 연산한다) 사용</p>
+            <div ng-repeat="list in helloList" hello7 to="{{list.name}}" send="sendMessage(list.name)"></div>
+            <br>
+            <p>=를 이용한 바인딩</p>
+                <ul>
+                    <li ng-repeat="list in helloList">
+                        <input type="text" ng-model="list.name">
+                    </li>
+                </ul>
+                <div ng-repeat="list in helloList" hello8 to="list.name"></div>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
