@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script src="js/sparkline.js"></script>
+        <script>
+            angular.module('sampleApp',[]).
+            controller('ctrl',function($scope){
+                $scope.chartData1=[1,22,4,2,12,3];
+                $scope.chartData2=[3,4,2,10,3,4,11];
+                $scope.chartData3=[0,0,0];
+                $scope.selectData = {x:null, y:null};
+                $scope.handleClick = function(x,y){
+                    $scope.selectedData.x=x;
+                    $scope.selectedData.y=y;
+                };
+            })
+            .directive('ngSparkline',function(){
+                return{
+                    restrict:"AE",
+                    scope:{
+                        chartData:"@"
+                    },
+                    link:function(scope,iEl,iAt,ctrl){
+                        var chartData = scope.$eval(scope.chartData);
+                        var options = {
+                            type : iAt.chartType || 'line'
+                        };
+                        $(iEl).sparkline(chartData,options);
+                    }
+                }
+            })
+            .directive('ngSparkline2',function(){
+                return{
+                    restrict:"AE",
+                    scope:{
+                        chartData:"="
+                    },
+                    link:function(scope,iEl,iAt,ctrl){
+                        var options = {
+                            type : iAt.chartType || 'line'
+                        };
+                        $(iEl).sparkline(scope.chartData,options);
+                    }
+                }
+            })
+            .directive('ngSparkline3',function(){
+                return{
+                    restrict:"AE",
+                    scope:{
+                        chartData:"=",
+                        chartClick:"&"
+                    },
+                    link:function(scope,iEl,iAt,ctrl){
+                        var options = {
+                            type : iAt.chartType || 'line'
+                        };
+                        scope.$watch('chartData',function(bfData,afData){
+                            $(iEl).sparkline(scope.chartData,options);
+                        },true);
+                        $(iEl).bind('sparklineClick',function(ev){
+                            var sparkline = ev.sparklines[0];
+                            region = sparkline.getCurrentRegionFields();
+                            regionX = region.x;
+                            regionY = region.y;
+
+                            if(regionX == undefined && region[0] ) regionX = region[0].offset;
+                            if(regionY == undefined && region[0] ) regionY = region[0].value;
+                            scope.$apply(function(){
+                                scope.chartClick({x:regionX, y:regionY});
+                            });
+                        });
+                    }
+                }
+            });
+        </script>
+        <style>
+        </style>
+    </head>
+    <body ng-app="sampleApp" ng-controller="ctrl">
+        <div class="container">
+            <p>sparkline using directive</p>
+            <ng-sparkline class="height200" chart-data="[1,22,4,2,12,3]" chart-type="bar"></ng-sparkline>
+            <div class="height200" ng-sparkline chart-data="[3,4,2,19,3,4,11]"></div>
+            <br>
+            <p>sparkline using controller</p>
+            <ng-sparkline2 chart-data="chartData1" chart-type="bar"></ng-sparkline2>
+            <div ng-sparkline2 chart-data="chartData2"></div>
+            <p>sparkline with databinding</p>
+            <input type="text" ng-model="chartData3[0]">
+            <input type="text" ng-model="chartData3[1]">
+            <input type="text" ng-model="chartData3[2]">
+            <br>
+            <p>데이터 : {{chartData3}}</p>
+            <ng-sparkline3 chart-data="chartData3" chart-type="bar" chart-click="handleClick(x,y)"></ng-sparkline3>
+            <ng-sparkline3 chart-data="chartData3" chart-type="line" chart-click="handleClick(x,y)"></ng-sparkline3>
+            <p>선택한 데이터 : x는 {{selectedData.x}} / y는 {{selectedData.y}}</p>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+        <script>
+
+        </script>
+    </body>
+</html>
