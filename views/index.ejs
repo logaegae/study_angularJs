@@ -36,6 +36,9 @@
                 },{
                     title:'sparkLine',
                     link:'sparkLine.ejs'
+                },{
+                    title:'factory',
+                    link:'factory.ejs'
                 }
             ]
         });
@@ -52,6 +55,11 @@
             <p>list</p>
             <ul>
                 <li ng-repeat="item in list"><a href="{{item.link}}">{{item.title}}</a></li>
+            </ul>
+            <br>
+            <p>api</p>
+            <ul>
+                <li><a href="nSearch.ejs">naver search api</a></li>
             </ul>
         </div>
     </body>

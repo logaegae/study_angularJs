@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include ./blocks/layout.ejs %>
+        <script>
+            angular.module('sampleApp', [])
+                .controller('ctrl', function($scope, hello) {
+                    $scope.name = '?';
+                    $scope.hello = function(name) {
+                        return hello.say(name);
+                    }
+                })
+                .factory('hello', [function() {
+                    var helloText = "님 안녕하세요.";
+
+                    return {
+                        say: function(name) {
+                            return name + helloText;
+
+                        }
+                    }
+                }])
+        </script>
+</head>
+
+<body ng-app="sampleApp" ng-controller="ctrl">
+    <div class="container">
+        <input type="text" ng-model="name">
+        <p>{{hello(name)}}</p>
+        <hr>
+        <div class="text-center">
+            <button onclick="location.href='index.ejs'">index</button>
+        </div>
+    </div>
+</body>
+
+</html>

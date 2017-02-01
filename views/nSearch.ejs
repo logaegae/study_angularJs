@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="text-center">네이버 쇼핑 검색</h1>
+            <hr>
+            <form action="nSearch.ejs" method="get">
+                <span>검색어 </span>
+                <input type="text" name="search">
+                <br>
+                <br>
+                <br>
+                <% if (Object.keys(query).length != 0 ){ %>
+                    <% for (var attr in query){ %>
+                        <%= attr %> : <%= query[attr] %> <br>
+                    <% } %>
+                <% } %>
+                <input type="submit" value="검색">
+            </form>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
