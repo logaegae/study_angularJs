@@ -23,14 +23,12 @@ router.all("/nSearch.ejs", function(req, res, next) {
                 'X-Naver-Client-Secret': client_secret
             }
         };
-
-        console.log(options);
         req = https.request(options, function(response) {
                 response.setEncoding('utf8');
                 response.on('data', function (json) {
-                    console.log(json)
-                    var data = json;
-                    res.render('nSearch.ejs',data);
+                    var list = JSON.parse(json);
+                    console.log(list)
+                    res.locals.data = list;
                     next();
                 });
             });

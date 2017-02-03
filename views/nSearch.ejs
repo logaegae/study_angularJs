@@ -9,21 +9,31 @@
             <hr>
             <form action="nSearch.ejs" method="get">
                 <span>검색어 </span>
-                <input type="text" name="search">
+                <input type="text" name="search" value="<% if(query.search){ %> <%= query.search %> <% } %>"> <input type="submit" value="검색">
                 <br>
                 <br>
                 <br>
-                <% if (Object.keys(query).length != 0 ){ %>
-                    <% for (var attr in query){ %>
-                        <%= attr %> : <%= query[attr] %> <br>
+                <% if (Object.keys(data).length != 0 ){ %>
+                    <% for (var attr in data.items){ %>
+                        <span style="margin:10px;">
+                            <a href="<%= data.items[attr].link %>" style="display:inline-block;">
+                                <img style="width:200px;" src="<%= data.items[attr].image %>" alt=""> <br>
+                                <%= Number(attr) + 1 %> : <span class="title"><%= data.items[attr].title %></span>
+                            </a>
+                        </span>
                     <% } %>
                 <% } %>
-                <input type="submit" value="검색">
+
             </form>
             <hr>
             <div class="text-center">
                 <button onclick="location.href='index.ejs'">index</button>
             </div>
         </div>
+        <script>
+            $('.title').each(function(i,e){
+                $(e).html($(e).text())
+            });
+        </script>
     </body>
 </html>
