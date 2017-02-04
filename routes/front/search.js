@@ -34,6 +34,7 @@ router.all("/nSearch.ejs", function(req, res, next) {
             });
         req.end();
     }else{
+        res.locals.data = {};
         next();
     }
 
