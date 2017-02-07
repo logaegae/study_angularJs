@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+        angular.module('sampleApp',[])
+        .provider('Logger',[function(){
+            var defaultLogLevel = 'log';
+
+            function Logger2(msg){
+                if(checkNativeLogger){
+                    if(defaultLogLevel == "debug"){
+                        console.debug(msg);
+                        return;
+                    }
+                    if(defaultLogLevel == "info"){
+                        console.info(msg);
+                        return;
+                    }
+                    console.log(msg)
+                }
+            }
+
+            this.setDefaultLevel = function(level){
+                switch(level){
+                    case 'debug' :
+                        defaultLogLevel = "debug";
+                        break;
+                    case 'info' :
+                        defaultLogLevel = "info";
+                        break;
+                    default :
+                        defaultLogLevel = "log";
+                }
+            };
+
+            function Logger(msg){
+                if(checkNativeLogger) console.log(msg);
+            }
+            Logger.debug = function(msg){ if(checkNativeLogger) console.debug(msg) };
+            Logger.info = function(msg){ if(checkNativeLogger) console.info(msg)};
+
+            function checkNativeLogger(){
+                if(console) return true;
+                return false;
+            }
+            this.$get =[function(){
+                return Logger;
+            }]
+        }])
+        .provider('Cal',[function(){
+            var defaultRadius = 10;
+            this.setDefaultRadius = function(rad){
+                defaultRadius = rad;
+            };
+            this.$get=['PI',function(pi){
+                return{
+                    getCircleArea : function(rad){
+                        var r = rad || defaultRadius;
+                        return r*r*PI
+                    }
+                }
+            }]
+        }])
+        .directive('circle',['Cal','PI',function(Cal,PI){
+            return{
+                restrict : 'E',
+                template: '<canvas width="100" height="100"></canvas>',
+                link:function(scope,iElement,iAttrs){
+                    var context = iElement.find('canvas')[0].getContext('2d');
+                    var radius = 30;
+
+                    context.beginPath();
+                    context.arc(50, 50, radius, 0, 2*PI, false);
+                    context.fillStyle='green';
+                    context.fill();
+                    context.lineWidth = 5;
+                    context.strokeStyle="#003300";
+                    context.stroke();
+                    iElement.append("<p>반지름 30px인 원의 넓이 : "+Cal.getCircleArea(radius)+"px </p>");
+                }
+            };
+        }])
+        .config('CalProvider',function(CalProvider,PI){
+            CalProvider.setDefaultRadius(5)
+        })
+        .config(['LoggerProvider',function(LoggerProvider){
+            LoggerProvider.setDefaultLevel("debug");
+        }])
+        .constant('PI',3.14159)
+        .controller('mainCtrl',function($scope, Logger){
+            Logger("console.log로 출력하는 로그메세지");
+            Logger.debug("console.debug 출력하는 로그메세지");
+        });
+        </script>
+    </head>
+    <body ng-app="sampleApp" ng-controller="mainCtrl">
+        <div class="container">
+            <circle></circle>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

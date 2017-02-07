@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+            function Claculator($log){
+                this.lastValue = 0;
+
+                this.add = function(a,b){
+                    var returnV = a+b;
+                    this.lastValue = returnV;                    
+                    return returnV;
+                };
+                this.minus = function(a,b){
+                    var returnV = a-b;
+                    this.lastValue = returnV;
+                    return returnV;
+                };
+            }
+            angular.module('sampleApp',[])
+            .factory('CalcByF',[function(){
+                return new Claculator();
+            }])
+            .service('calcByS',Claculator)
+            .controller('mainCtrl',function($scope,CalcByF,calcByS){
+                $scope.val1 = CalcByF.add(10,3);
+                console.log(CalcByF.lastValue);
+                $scope.val2 = calcByS.minus(20,10);
+                console.log(calcByS.lastValue);
+            })
+        </script>
+    </head>
+    <body ng-app="sampleApp" ng-controller="mainCtrl">
+        <div class="container">
+            <br>
+            <p>10 + 3 = {{val1}}</p>
+            <p>20 - 10 = {{val2}}</p>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
