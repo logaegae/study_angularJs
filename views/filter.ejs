@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+            angular.module('sampleApp',[])
+            .controller('mainCtrl',['$scope','$filter',function($scope,$filter){
+                $scope.cValue = 6300;
+                $scope.dNow = new Date();
+                $scope.jObj = {name:'순희'};
+                $scope.lString = 'Cindy Kim';
+                $scope.nValue = 10/3;
+                $scope.dataFromatedDNow = $filter('date')($scope.dNow,'yyyy-mm-dd');
+                $scope.userList = [
+                    {userId: 'jay', userName: '제이', userEmail: 'jay@ng.com'},
+                    {userId: 'soon', userName: '순희', userEmail: 'soon@ng.com'},
+                    {userId: 'cindy', userName: '가영', userEmail : 'cindy@ng.com'},
+                    {userId : 'miho', userName : '민호', userEmail:'mino@ng.com'},
+                    {userId : 'teapong', userName : '태홍', userEmail : 'teapong@ng.com'}
+                ];
+                $scope.userList2 = $scope.userList;
+                $scope.filter=function(filterObj){
+                    $scope.userList2 = $filter('filter')($scope.userList,filterObj);
+                }
+                $scope.hello = "hello";
+            }])
+            .config(function($filterProvider){
+                $filterProvider.register('capitalize',function(){
+                    return function(text){
+                        return text.charAt(0).toUpperCase() + text.slice(1);
+                    };
+                });
+            });
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container">
+            <div ng-controller="mainCtrl">
+                <h1>필터사용 예제</h1>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>사용 필터</td>
+                            <td>원래</td>
+                            <td>필터 적용</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>currency</td>
+                            <td>{{cValue}}</td>
+                            <td>{{cValue | currency}}</td>
+                        </tr>
+                        <tr>
+                            <td>date</td>
+                            <td>{{dNow}}</td>
+                            <td>{{dNow | date:'yyyy년 mm월 dd일'}}</td>
+                        </tr>
+                        <tr>
+                            <td>JSON</td>
+                            <td>{{jObj}}</td>
+                            <td>{{jObj | json}}</td>
+                        </tr>
+                        <tr>
+                            <td>lowercase</td>
+                            <td>{{lString}}</td>
+                            <td>{{lString | lowercase}}</td>
+                        </tr>
+                        <tr>
+                            <td>uppercase</td>
+                            <td>{{lString}}</td>
+                            <td>{{lString | uppercase}}</td>
+                        </tr>
+                        <tr>
+                            <td>nValue</td>
+                            <td>{{nValue}}</td>
+                            <td>{{nValue | number:5}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>filter</h2>
+                <div>사용자이름 : <input type="text" ng-model="search.userName"></div>
+                <ul>
+                    <li ng-repeat="user in userList | filter:search">
+                        <p>{{user.userId}} / {{user.userName}} / {{user.userEmail}}</p>
+                    </li>
+                </ul>
+
+                <h2>limitTo</h2>
+                <div>제한갯수 : <input type="number" ng-model="limitNum"></div>
+                <ul>
+                    <li ng-repeat="user in userList | limitTo:limitNum">
+                        <p>{{user.userId}} / {{user.userName}} / {{user.userEmail}}</p>
+                    </li>
+                </ul>
+
+                <h2>orderBy</h2>
+                <div>
+                    정렬 순서<br>
+                    아이디 : <input type="radio" ng-model="order" value="userId">
+                    이름 : <input type="radio" ng-model="order" value="userName">
+                    <br>
+                    역순 여부 &nbsp;&nbsp;
+                    <input type="checkbox" ng-model="reverse">
+                </div>
+                <ul>
+                    <li ng-repeat="user in userList | orderBy:order:reverse">
+                        <p>{{user.userId}} / {{user.userName}} / {{user.userEmail}}</p>
+                    </li>
+                </ul>
+
+                <h2>$filter</h2>
+                <p>사용 전 : {{dNow}}</p>
+                <p>사용 후 : {{dataFromatedDNow}}</p>
+                <hr>
+                <div>
+                    사용자이름 : <input type="text" ng-model="search2.userName"><button ng-click="filter(search2)">필터처리</button>
+                </div>
+                <ul>
+                    <li ng-repeat="user in userList2">
+                        <p>{{user.userId}} / {{user.userName}} / {{user.userEmail}}</p>
+                    </li>
+                </ul>
+                <h2>$filterProvider</h2>
+                <p>사용 전 : {{hello}}</p>
+                <p>사용 후 : {{hello | capitalize}}</p>
+            </div>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

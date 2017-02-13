@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+            angular.module('sampleApp',[])
+            .factory('Hello',[function(){
+                return{
+                    helloTo : function(name){
+                        console.log('hello ' +name);
+                        return 'hello ' +name;
+                    }
+                };
+            }])
+            $(function(){
+                var injector = angular.injector(['ng','sampleApp']);
+                invokedReturnValue = null;
+                helloAppenderInstance1 = null;
+                helloAppenderInstance2 = null;
+
+                invokedReturnValue = injector.invoke(function(Hello){
+                    var hello = Hello.helloTo('줄리엣');
+                    $('.container').append(hello);
+                    return hello;
+                });
+
+                function HelloAppender(Hello, $compile, $rootScope){
+                    var helloEl = $('<p>{{hello}}</p>');
+                    var scope = $rootScope.$new();
+                    scope.hello = '';
+                    $('.container').append($compile(helloEl)(scope));
+
+                    this.setName = function(name){
+                        scope.hello = Hello.helloTo(name);
+                        scope.$digest();
+                    }
+                }
+                helloAppenderInstance1 = injector.instantiate(HelloAppender);
+                helloAppenderInstance2 = injector.instantiate(HelloAppender);
+                helloAppenderInstance1.setName("제시카");
+                helloAppenderInstance2.setName("조나단");
+                console.log("invokedReturnValue : ",invokedReturnValue);
+                console.log("helloAppenderInstance1 :",helloAppenderInstance1);
+                console.log("helloAppenderInstance2 :",helloAppenderInstance2);
+
+                hasHello = injector.has('Hello');
+                HelloSvc = null;
+
+                if(hasHello){
+                    HelloSvc = injector.get('Hello');
+                    HelloSvc.helloTo("철수");
+                }
+            });
+
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container">
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

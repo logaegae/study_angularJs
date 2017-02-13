@@ -2,55 +2,8 @@
 <html>
     <head>
     <%- include ./blocks/layout.ejs %>
-    <script>
-        var app = angular.module('indexPage', []);
-        app.controller('indexPageCtrl',function($scope){
-            $scope.list = [
-                {
-                    title:'Todo list',
-                    link:'todo.ejs'
-                },{
-                    title:'menu',
-                    link:'menu.ejs'
-                },{
-                    title:'switch',
-                    link:'switch.ejs'
-                },{
-                    title:'if',
-                    link:'if.ejs'
-                },{
-                    title:'form',
-                    link:'form.ejs'
-                },{
-                    title:'event',
-                    link:'event.ejs'
-                },{
-                    title:'scope',
-                    link:'scope.ejs'
-                },{
-                    title:'directive',
-                    link:'directive.ejs'
-                },{
-                    title:'transclude',
-                    link:'transclude.ejs'
-                },{
-                    title:'sparkLine',
-                    link:'sparkLine.ejs'
-                },{
-                    title:'factory',
-                    link:'factory.ejs'
-                },{
-                    title:'service',
-                    link:'service.ejs'
-                },{
-                    title:'provider',
-                    link:'provider.ejs'
-                }
-            ]
-        });
-    </script>
     </head>
-    <body ng-app="indexPage" ng-controller="indexPageCtrl">
+    <body>
         <div class="container">
             <br>
             <h1><%= title %></h1>
@@ -60,7 +13,11 @@
             <br><br>
             <p>list</p>
             <ul>
-                <li ng-repeat="item in list"><a href="{{item.link}}">{{item.title}}</a></li>
+                <% listJson.forEach(function(e){ %>
+                    <li>
+                        <a href="<%= e.file %>.ejs" %>"><%= e.file %></a>
+                    </li>
+                <% }) %>
             </ul>
             <br>
             <p>api</p>
