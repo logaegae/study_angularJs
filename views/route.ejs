@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script type="text/javascript" src="/js/angular-route.min.js"></script>
+        <style>
+            ul{padding:0;}
+            ul.menu li{
+                padding:5px;
+                border:1px solid black;
+                background: black;
+                display:inline;
+            }
+            ul li a{
+                text-decoration:none;
+                color:white;
+            }
+        </style>
+        <script>
+            angular.module('sampleApp',['ngRoute']).
+            config(function($routeProvider){
+                $routeProvider
+                    .when('/home',{templateUrl:'/template/home.tmpl.html'})
+                    .when('/about',{templateUrl:'/template/about.tmpl.html',controller:'aboutCtrl'})
+                    .when('/contact',{templateUrl:'/template/contact.tmpl.html',controller:'contactCtrl'})
+                    .otherwise({redirectTo:'/home'});
+            })
+            .controller('aboutCtrl',function($scope){
+                $scope.sales=20000000;
+            })
+            .controller('contactCtrl',function($scope){
+                $scope.contact = {};
+                $scope.contactSubmit = function(contact){
+                    alert(contact.name+"에게 "+contact.contents+"를 전달했습니다.");
+                };
+
+            });
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container">
+            <h1></h1>
+            <ul class="menu">
+                <li>
+                    <a href="route.ejs#!/home">홈</a>
+                </li>
+                <li>
+                    <a href="route.ejs#!/about">회사에 관하여</a>
+                </li>
+                <li>
+                    <a href="route.ejs#!/contact">연락처</a>
+                </li>
+            </ul>
+            <ng-view></ng-view>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+
+        </div>
+    </body>
+</html>
