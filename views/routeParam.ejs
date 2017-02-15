@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <style>
+            ul{padding:0;}
+            ul.contact-list{
+                margin:2px;
+                padding:2px;
+                border:1px solid yellow;
+                background: #000;
+                color:#FFF;
+            }
+            ul.contact-list li:hover{
+                background-color: yellow;
+                color:black;
+            }
+        </style>
+        <script type="text/javascript" src="/js/angular-route.min.js"></script>
+        <script>
+            angular.module('sampleApp',['ngRoute'])
+            .config(function($routeProvider){
+                $routeProvider
+                .when('/contacts',{templateUrl:'/template/contact-list.tmpl.html', controller:'contactListCtrl'})
+                .when('/contacts/:contactId',{templateUrl:'/template/contact-detail.tmpl.html',controller:'contactDetailCtrl'})
+                .otherwise({redirectTo:'/contacts'})
+            })
+            .factory('ContactSvc',[function(){
+                var cList = [
+                    {id:'c001',name:'순희',email:'soon@ng.com',phone:'010-1111-2222'},
+                    {id:'c001',name:'철수',email:'cheol@ng.com',phone:'010-1111-3333'},
+                ];
+
+                return{
+                    getList : function(){
+                        return cList;
+                    },
+                    get:function(id){
+                        var returnObj = {};
+                        for(var i=0;i<cList.length;i++){
+                            if(id == cList[i].id){
+                                returnObj = cList[i];
+                                break;
+                            }
+                        }
+                        return returnObj;
+                    }
+                }
+            }])
+            .controller('contactListCtrl',function($scope,ContactSvc,$location){
+                $scope.contactList = ContactSvc.getList();
+                $scope.viewDetail = function(id){
+                    $location.path('/contacts/'+id);
+                };
+            })
+            .controller('contactDetailCtrl',function($scope,ContactSvc,$routeParams){
+                $scope.contact = ContactSvc.get($routeParams.contactId)
+            })
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container">
+            <ng-view></ng-view>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

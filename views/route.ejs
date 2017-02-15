@@ -33,12 +33,23 @@
                 $scope.contactSubmit = function(contact){
                     alert(contact.name+"에게 "+contact.contents+"를 전달했습니다.");
                 };
+            })
+            .controller('mainCrtl',function($scope, $route){
+                $scope.route = $route;
+                $scope.routes = $route.routes;
+                $scope.$on("$routeChangeSuccess",function(e,cRoute,pRoute){
+                    console.log("현재 라우트 정보 : ", cRoute.loadedTemplateUrl);
+                    if(pRoute) console.log("이전 라우트 정보 : ", pRoute.loadedTemplateUrl);
+                });
+                $scope.reload = function(){
+                    $route.reload();
+                }
 
             });
         </script>
     </head>
     <body ng-app="sampleApp">
-        <div class="container">
+        <div class="container" ng-controller="mainCrtl">
             <h1></h1>
             <ul class="menu">
                 <li>
@@ -52,6 +63,21 @@
                 </li>
             </ul>
             <ng-view></ng-view>
+            <hr>
+            <div>
+                <h2>라우트 정보</h2>
+                <h3>현재 라우트 정보</h3>
+                {{route.current}}
+                <br>
+                <h4>등록된 라우트 정보</h4>
+                <ul>
+                    <li ng-repeat="(key,value) in routes">
+                        <h5>{{key}}</h5>
+                        <p>{{value}}</p>
+                    </li>
+                </ul>
+            </div>
+            <button ng-click="reload()">리로드</button>
             <hr>
             <div class="text-center">
                 <button onclick="location.href='index.ejs'">index</button>
