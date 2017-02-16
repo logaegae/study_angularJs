@@ -17,7 +17,7 @@ router.all("/index.ejs", function(req, res, next){
     })
     res.locals.listJson = listJson;
 
-    res.locals.title="Study AngularJs with NodeJs";
+    res.locals.title="Study AngularJs in NodeJs";
     next();
 });
 

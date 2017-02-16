@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <style>
+            .info{
+                margin: 0px auto;
+                height: 20px;
+                background-color: aliceblue;
+            }
+            .info button{
+                float:right;
+            }
+        </style>
+        <script>
+            angular.module('sampleApp',[])
+            .directive('infoBox',[function(){
+                return{
+                    restrict:'E',
+                    scope:{infoMessage:'='},
+                    template:'<p class="info">{{infoMessage}}<button ng-click="hide()">x</button></p>',
+                    link:function(scope,iElement,iAttrs){
+                        scope.$watch("infoMessage",function(newData,beforeData){
+                            if(newData == undefined || newData == ''){
+                                scope.hide();
+                            }else{
+                                iElement.show({
+                                    duration:3000,
+                                    complete : function(){
+                                        iElement.hide();
+                                    }
+                                })
+                            }
+                        });
+                        scope.hide = function(){
+                            iElement.hide();
+                            scope.infoMessage = undefined;
+                        };
+                    }
+                };
+            }])
+            .controller('mainCtrl',function($scope,$http){
+                $scope.user = {};
+                $scope.search = function(){
+                    var reqPromise = $http({
+                        method : 'GET',
+                        url : '/json/sample.json'
+                    });
+                    // reqPromise.success(function(data,status,headers,config){
+                    //     $scope.user = data[0];
+                    // });
+                    reqPromise.then(function(res){
+                        $scope.user = res.data[0];
+                        $scope.msg = res.data.userId +" 로딩 완료 ";
+                    },function(res){
+                        $scope.msg = "ERROR"
+                    });
+                };
+                $scope.insert = function(){
+                    $scope.edit = "insert";
+                    $scope.editable = true;
+                    $scope.user={};
+                };
+                $scope.update = function(){
+                    $scope.edit="update";
+                    $scope.editable=true;
+                };
+            });
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container" ng-controller="mainCtrl">
+            <info-box info-message="msg"></info-box>
+            <p class="user">
+                사용자 아이디 : {{user.userId}}
+                <br>
+                사용자 이름 : {{user.name}}
+                <br>
+                사용자 이메일 : {{user.userEmail}}
+            </p>
+            <div>
+                <button ng-click="search()">조회</button>
+            </div>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
