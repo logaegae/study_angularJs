@@ -39,8 +39,10 @@
                     }
                 };
             }])
-            .controller('mainCtrl',function($scope,$http){
+            .value('baseUrl','http://localhost:3000/')
+            .controller('mainCtrl',function($scope,$http,baseUrl){
                 $scope.user = {};
+                $scope.editable = false;
                 $scope.search = function(){
                     var reqPromise = $http({
                         method : 'GET',
@@ -56,6 +58,19 @@
                         $scope.msg = "ERROR"
                     });
                 };
+                $scope.search2 = function(searchObj){
+                  var reqPromise = $http.get(baseUrl +'getUser',{
+                    params : searchObj
+                  });
+                  reqPromise.success(function(data,status,headers,config){
+                    if(data.userId){
+                      $scope.user = data;
+                      $scope.isSearched = true;
+                    }
+                    $scope.error = undefined;
+                  });
+                  reqPromise.error(error);
+                }
                 $scope.insert = function(){
                     $scope.edit = "insert";
                     $scope.editable = true;
@@ -65,11 +80,43 @@
                     $scope.edit="update";
                     $scope.editable=true;
                 };
+                $scope.save = function(edit,user){
+                  var reqPromise;
+                  switch(edit){
+                    case "insert" :
+                      reqPromise = $http.post(baseUrl+'insertUser',user);
+                      break;
+                    case "update":
+                      reqPromise = $http.put(baseUrl+'updateUser'user);
+                      break;
+                    default :
+                      reqPromise = {};
+                      break;
+                  }
+                  reqPromise.success(function(data,status,headers,config){
+                    reset();
+                  });
+                  reqPromise.error(error);
+                };
+                $scope.cancle = function(){
+                  reset();
+                }
+                function error(data,status,headers,config){
+                  $scope.user = {};
+                  $scope.error = "로드실패";
+                }
+                function reset(){
+                  $scope.user = {};
+                  $scope.edit = undefined;
+                  $scope.error = undefined;
+                  $scope.editable = false;
+                }
             });
         </script>
     </head>
     <body ng-app="sampleApp">
         <div class="container" ng-controller="mainCtrl">
+            <div></div>
             <info-box info-message="msg"></info-box>
             <p class="user">
                 사용자 아이디 : {{user.userId}}
