@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script type="text/javascript" src="/js/angular-resource.js"></script>
+        <script>
+            angular.module('sampleApp',['ngResource'])
+            .value('mongodbApiKey','gSgrrqEjiCUTyZFIfZV3bbBG41fuyYas')
+            .run(function($resouce,mongodbApiKey){
+                var TodoResource = $resource('http://api.mlab.com/api/1/databases/sample/collections?todos/:todoId?apiKey=:apiKey',{apiKey:mongodbApiKey},{
+                    'update' : {
+                        method:'PUT'
+                    }
+                });
+                var todo1 = new TodoResource;
+                    todo1.done = false;
+                    todo1.title = "공부하기";
+                todo1.$save(function(){
+                    var id = todo1["_id"].$oid;
+                    TodoResource.update({
+                        todoId : id
+                    },JSON.stringify({done:true,title:todo1.title}),function(){
+                        var updatedTodo1 = TodoResource.get({
+                            todoId : id
+                        },function(){
+                            if(updatedTodo1.done == true){
+                                updatedTodo1.$delete({
+                                    todoId : id
+                                });
+                            }
+                        });
+                    })
+                });
+            });
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container">
+
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

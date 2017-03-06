@@ -39,7 +39,7 @@
                     }
                 };
             }])
-            .value('baseUrl','http://localhost:3000/')
+            .value('baseUrl','/json/sample.json')
             .controller('mainCtrl',function($scope,$http,baseUrl){
                 $scope.user = {};
                 $scope.editable = false;
@@ -59,7 +59,7 @@
                     });
                 };
                 $scope.search2 = function(searchObj){
-                  var reqPromise = $http.get(baseUrl +'getUser',{
+                  var reqPromise = $http.get(baseUrl,{
                     params : searchObj
                   });
                   reqPromise.success(function(data,status,headers,config){
@@ -84,10 +84,10 @@
                   var reqPromise;
                   switch(edit){
                     case "insert" :
-                      reqPromise = $http.post(baseUrl+'insertUser',user);
+                      reqPromise = $http.post(baseUrl,user);
                       break;
                     case "update":
-                      reqPromise = $http.put(baseUrl+'updateUser'user);
+                      reqPromise = $http.put(baseUrl,user);
                       break;
                     default :
                       reqPromise = {};
@@ -116,12 +116,29 @@
     </head>
     <body ng-app="sampleApp">
         <div class="container" ng-controller="mainCtrl">
-            <div></div>
+            <div>
+                사용자 아이디 : <input type="text" ng-model="searchObj.userId">
+                <button ng-click="search2(searchObj)" ng-disabled="editable">조회</button>
+            </div>
+            <p ng-if="error">{{error}}</p>
+            <br>
+            <form class="user" name="userForm">
+                사용자 아이디 : <input type="text" ng-model="user.userId" ng-disabled="!editable && edit != 'insert'">
+                <br>
+                사용자 이름 : <input type="text" ng-model="user.userName" ng-disabled="!editable">
+                <br>
+                사용자 이메일 : <input type="text" ng-model="user.userEmail" ng-disabled="!editable">
+            </form>
+            <br>
+            <div ng-show="!edit">
+                <button ng-click="update()" ng-show="isSearched">수정</button>
+            </div>
+
             <info-box info-message="msg"></info-box>
             <p class="user">
                 사용자 아이디 : {{user.userId}}
                 <br>
-                사용자 이름 : {{user.name}}
+                사용자 이름 : {{user.userName}}
                 <br>
                 사용자 이메일 : {{user.userEmail}}
             </p>
