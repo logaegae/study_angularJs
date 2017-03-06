@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script>
+          angular.module('sampleApp',[])
+          .controller('mainCtrl',function($scope,$timeout){
+            var threeSecPromise = $timeout(function(){
+                return $scope.answer;
+            },3000);
+
+            $scope.ran = ~~(Math.random()*100);
+            $scope.ans = $scope.ran +10 + 29 + 2 - 1;
+            threeSecPromise.then(function(val){
+                console.log($scope.ans);
+                if(val == $scope.ans){
+                    $scope.result="맞았어요.";
+                }else{
+                    $scope.result="틀렸어요.";
+                }
+            },function(){
+                $scope.result="너무 어려웠나?";
+            });
+            threeSecPromise.finally(function(){
+                $scope.info = "다시 시작하려면 refresh 해주세요.";
+            });
+            $scope.giveUp = function(){
+                $timeout.cancle(threeSecPromise);
+            };
+        });
+        </script>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container" ng-controller="mainCtrl">
+            <h1>3초안에 답을 맟추세요</h1>
+            {{ran}} + 10 + 29 + 2 - 1 = <input ng-model="answer" ng-disabled="result" type="text">
+            <button ng-click="giveUp()">포기</button>
+            <p>{{result}}</p>
+            <p>{{info}}</p>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>

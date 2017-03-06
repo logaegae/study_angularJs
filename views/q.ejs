@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include ./blocks/layout.ejs %>
+        <script src="/js/angular-route.min.js"></script>
+        <script>
+            angular.module('sampleApp',['ngRoute'])
+            .config(function($httpProvider){
+                $httpProvider.interceptors.push(function($q,$timeout){
+                    return {
+                        'request' : function(config){
+                            return $timeout(function(){
+                                return config;
+                            },3000);
+                        },
+                        'response':function(response){
+                            return response || $q.when(response);
+                        }
+                    };
+                });
+            })
+            .factory('Teacher',[function(){
+                function Teacher(name){
+                    this.name = name;
+                }
+                Teacher.prototype.makeScore = function(data){
+                    if(data>5){
+                        return 100;
+                    }else{
+                        return 4;
+                    }
+                }
+                Teacher.prototype.giveCandy = function(num,student){
+                    return student.name+"(군/양) 사탕" + num + "개 받으세요.";
+                }
+                Teacher.prototype.hitHip = function(num,student,error){
+                    return student.name +"(군/양) 엉덩이" + num + "대 맞으세요."+error;
+                }
+                return Teacher;
+            }])
+            .factory('Student',['$q','$timeout',function($q,$timeout){
+                function Student(name){
+                    this.name = name;
+                }
+                Student.prototype.doHomework = function(homework){
+                    var deferred = $q.defer(),
+                    time = (Math.random() * 10 + homework.length)*500;
+                    console.log("숙제하는데 걸리는 시간 : ", time);
+                    $timeout(function(){
+                        var homeworkResult = time / 1000;
+                        console.log("숙제 결과 : ", homeworkResult);
+                        if(time<6000){
+                            deferred.resolve(homeworkResult);
+                        }else{
+                            deferred.reject("핑계들..");
+                        }
+                    },time);
+                    return deferred.promise
+                }
+                return Student;
+            }])
+            .config(function($routeProvider){
+                $routeProvider
+                .when('/contacts',{
+                    templateUrl : '/template/contact-list.tmpl.html',
+                    controller : 'contactListCtrl'})
+                .when('/contacts/:contactId',{
+                    templateUrl : 'template/contact-detail.tmpl.html',
+                    controller : 'contactDetailCtrl',
+                    resolve : {
+                        contact : function($q,$route,$timeout,ContactSvc){
+                            var deferred = $q.defer();
+                            $timeout(function(){
+                                var result = ContactSvc.get($route.current.params.contactId);
+                                deferred.resolve(result);
+                            },2000);
+                        return deferred.promise;
+                        }
+                    }
+                })
+                .otherwise({redirectTo:'/contacts'});
+            })
+            .factory('ContactSvc',[function(){
+                var cList = [
+                    {id:'c001',name:'순희',email:'soon@ng.com',phone:'010-2222-3333'},
+                    {id:'c002',name:'철수',email:'chul@ng.com',phone:'010-3333-4444'}
+                ];
+                return {
+                    getList : function(){
+                        return cList;
+                    },
+                    get : function(id){
+                        var returnObj = {};
+                        for(var i=0;i<cList.length;i++){
+                            if(id == cList[i].id){
+                                returnObj = cList[i];
+                                break;
+                            }
+                        }
+                        return returnObj;
+                    }
+                };
+            }])
+            .controller('mainCtrl',function($scope,$http,$q,Teacher, Student){
+                $scope.send = function(){
+                    $http({
+                        method :'GET',
+                        url : '/json/sample.json'
+                    }).then(function(data){
+                        $scope.result = data;
+                    });
+                }
+                $scope.send2 = function(){
+                    var httpPromise = $http({
+                        method :'GET',
+                        url : '/json/sample.json'
+                    })
+                    $q.all([httpPromise]).then(function(data){
+                        $scope.result = data;
+                    });
+                }
+                var jay = new Student('jay'),
+                cindy = new Teacher('cindy'),
+                promiseWithStudent = jay.doHomework('숙제내용..');
+
+                promiseWithStudent.then(function(data){
+                    if(cindy.makeScore(data) == 100){
+                        console.log(cindy.giveCandy(100,jay));
+                    }else{
+                        console.log(cindy.giveCandy(50,jay));
+                    }
+                },function(error){
+                    console.log(cindy.hitHip(1000000,jay,error));
+                })
+            })
+            .controller('contactListCtrl',function($scope,ContactSvc,$location){
+                $scope.contactList = ContactSvc.getList();
+                $scope.viewDetail = function(id){
+                    $location.path('/contacts/'+id);
+                }
+            })
+            .controller('contactDetailCtrl',function($scope,contact){
+                $scope.contact = contact;
+            });
+        </script>
+        <style>
+            ul{
+                padding : 0;
+            }
+            ul.contact-list li {
+                margin : 2px;
+                padding : 2px;
+                border : 1px solid yellow;
+                background: #000;
+                color : white;
+            }
+            ul.contact-list li:hover{
+                background-color: yellow;
+                color : black;
+            }
+        </style>
+    </head>
+    <body ng-app="sampleApp">
+        <div class="container" ng-controller="mainCtrl">
+            <br>
+            <button ng-click="send()">요청보내기</button>
+            <button ng-click="send2()">병렬제어</button>
+            <p>{{result}}</p>
+            <hr>
+            <ng-view></ng-view>
+            <hr>
+            <div class="text-center">
+                <button onclick="location.href='index.ejs'">index</button>
+            </div>
+        </div>
+    </body>
+</html>
